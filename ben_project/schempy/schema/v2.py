@@ -27,4 +27,4 @@ SpongeV2 = schema('Sponge', {
     'BiomePaletteMax': Int,
     'BiomePalette': Compound,
     'BiomeData': ByteArray
-}, strict=False)
+}, strict=True)

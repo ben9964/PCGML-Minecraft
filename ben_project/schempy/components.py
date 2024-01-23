@@ -68,11 +68,11 @@ class Palette(Generic[T]):
 class BlockPalette(Palette[Block]):
     def set_palette(self, palette: Dict[str, int]) -> None:
         self.clear()
-        # Parse each string into a Block object
+        self._index_to_item = [None] * len(palette)
         for block_str, index in palette.items():
             block = self._parse_block_str(block_str)
             self._item_to_index[block] = index
-            self._index_to_item.append(block)
+            self._index_to_item[index] = block
 
     @staticmethod
     def _parse_block_str(block_str: str) -> Block:

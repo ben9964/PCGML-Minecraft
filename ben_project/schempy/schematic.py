@@ -235,7 +235,7 @@ class Schematic:
 
     @classmethod
     def _parse_file_v2(cls, file: File) -> 'Schematic':
-        data = SpongeV2(file)['Schematic']
+        data = SpongeV2(file)
 
         # Get the required fields
         try:
