@@ -48,10 +48,10 @@ def generate(schem_name: str):
                             break
                         currValue += markovProbabilities[key][key2]
                 else:
-                    if random.uniform(0, 1) > 0.5:
-                        schem.set_block(x, y, z, Block("minecraft:air"))
-                    else:
-                        schem.set_block(x, y, z, Block("minecraft:stone"))
+                    #if random.uniform(0, 1) > 0.5:
+                    schem.set_block(x, y, z, Block("minecraft:air"))
+                    #else:
+                        #schem.set_block(x, y, z, Block("minecraft:stone"))
 
     schem.save_to_file(Path("markov/output_schems/" + schem_name + "_generated.schem"), 2)
 
