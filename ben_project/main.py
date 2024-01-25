@@ -2,7 +2,7 @@ import markov.train as tm
 import markov.generate as gen
 
 def main():
-    schem = "birchforest"
+    schem = "training_2"
     #tm.train(schem)
     gen.generate(schem)
 
