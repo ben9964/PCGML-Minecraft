@@ -28,8 +28,8 @@ def train(schem_name: str):
                     south = schem.get_block(x,y,z-1).id
                 if x > 0 and z > 0:
                     southwest = schem.get_block(x-1,y,z-1).id
-                if y > 0:
-                    down = schem.get_block(x,y-1,z).id
+                if y < maxY:
+                    down = schem.get_block(x,y+1,z).id
                 if x > 0 and y < maxY:
                     westdown = schem.get_block(x-1,y+1,z).id
                 if z > 0 and y < maxY:

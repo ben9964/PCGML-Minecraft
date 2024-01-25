@@ -9,9 +9,9 @@ def generate(schem_name: str):
     markovProbabilities = pickle.load(open("markov/probabilities/" + schem_name + "_probabilities.pickle", "rb"))
     schem = Schematic(25, 25, 25)
 
-    for x in range(0, schem.width):
-        maxY = schem.height - 1
-        for y in range(maxY, -1, -1):
+    maxY = schem.height - 1
+    for y in range(maxY, -1, -1):
+        for x in range(0, schem.width):
             for z in range(0, schem.length):
                 west = " "
                 southwest = " "
@@ -27,8 +27,8 @@ def generate(schem_name: str):
                     south = schem.get_block(x, y, z - 1).id
                 if x > 0 and z > 0:
                     southwest = schem.get_block(x - 1, y, z - 1).id
-                if y > 0:
-                    down = schem.get_block(x, y - 1, z).id
+                if y < maxY:
+                    down = schem.get_block(x, y + 1, z).id
                 if x > 0 and y < maxY:
                     westdown = schem.get_block(x - 1, y + 1, z).id
                 if z > 0 and y < maxY:
@@ -48,10 +48,10 @@ def generate(schem_name: str):
                             break
                         currValue += markovProbabilities[key][key2]
                 else:
-                    #if random.uniform(0, 1) > 0.5:
-                    schem.set_block(x, y, z, Block("minecraft:air"))
-                    #else:
-                        #schem.set_block(x, y, z, Block("minecraft:stone"))
+                    if random.uniform(0, 1) > 0.5:
+                        schem.set_block(x, y, z, Block("minecraft:air"))
+                    else:
+                        schem.set_block(x, y, z, Block("minecraft:stone"))
 
     schem.save_to_file(Path("markov/output_schems/" + schem_name + "_generated.schem"), 2)
 
