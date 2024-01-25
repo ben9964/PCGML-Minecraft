@@ -1,7 +1,9 @@
-import markov.trainingmarkov as tm
+import markov.train as tm
+import markov.generate as gen
 
 def main():
-    tm.train()
+    #tm.train("birchforest")
+    gen.generate("birchforest")
 
 if __name__ == '__main__':
     main()
