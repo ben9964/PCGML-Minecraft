@@ -3,40 +3,18 @@ import random
 from pathlib import Path
 
 from schempy import Schematic, Block
+from markov.training import key_functions as kf
 
 
-def generate(schem_name: str):
-    markovProbabilities = pickle.load(open("markov/probabilities/" + schem_name + "_probabilities.pickle", "rb"))
+def generate(pickle_id: str):
+    markovProbabilities = pickle.load(open("markov/probabilities/" + pickle_id + "_probabilities.pickle", "rb"))
     schem = Schematic(25, 25, 25)
 
     maxY = schem.height - 1
     for y in range(maxY, -1, -1):
         for x in range(0, schem.width):
             for z in range(0, schem.length):
-                west = " "
-                southwest = " "
-                south = " "
-                westdown = " "
-                southwestdown = " "
-                southdown = " "
-                down = " "
-
-                if x > 0:
-                    west = schem.get_block(x - 1, y, z).id
-                if z > 0:
-                    south = schem.get_block(x, y, z - 1).id
-                if x > 0 and z > 0:
-                    southwest = schem.get_block(x - 1, y, z - 1).id
-                if y < maxY:
-                    down = schem.get_block(x, y + 1, z).id
-                if x > 0 and y < maxY:
-                    westdown = schem.get_block(x - 1, y + 1, z).id
-                if z > 0 and y < maxY:
-                    southdown = schem.get_block(x, y + 1, z - 1).id
-                if x > 0 and z > 0 and y < maxY:
-                    southwestdown = schem.get_block(x - 1, y + 1, z - 1).id
-
-                key = west + southwest + south + westdown + southwestdown + southdown + down
+                key = kf.get_key_xyz(schem, x, y, z)
 
                 if key in markovProbabilities.keys():
 
@@ -53,5 +31,5 @@ def generate(schem_name: str):
                     else:
                         schem.set_block(x, y, z, Block("minecraft:stone"))
 
-    schem.save_to_file(Path("markov/output_schems/" + schem_name + "_generated.schem"), 2)
+    schem.save_to_file(Path("markov/output_schems/" + pickle_id + "_generated.schem"), 2)
 
