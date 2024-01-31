@@ -1,9 +1,9 @@
-import markov.train as tm
-import markov.generate as gen
+import markov.training.train as tm
+import markov.generation.generate as gen
 
 def main():
-    schem = "training_2"
-    #tm.train(schem)
+    schem = "testhill"
+    tm.train(schem)
     gen.generate(schem)
 
 if __name__ == '__main__':
