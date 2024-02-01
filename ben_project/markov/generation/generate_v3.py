@@ -7,34 +7,41 @@ from markov.training import key_functions as kf
 
 
 def generate(pickle_id: str, output_name: str):
-    markovProbabilities = pickle.load(open("markov/probabilities/" + pickle_id + "_probabilities.pickle", "rb"))
-    schem = Schematic(25, 25, 25)
+    markovProbabilitiesAbove = pickle.load(open("markov/probabilities/" + pickle_id + "above_probabilities.pickle", "rb"))
+    markovProbabilitiesBelow = pickle.load(
+        open("markov/probabilities/" + pickle_id + "below_probabilities.pickle", "rb"))
+    schem = Schematic(100, 50, 100)
 
-    blockPalette = []
-    for key in markovProbabilities.keys():
-        for key2 in markovProbabilities[key].keys():
-            if not key2 in blockPalette:
-                blockPalette.append(key2)
-
-    maxY = schem.height - 1
     for x in range(0, schem.width):
-        for y in range(maxY, -1, -1):
+        for y in range(schem.height - 1, -1, -1):
             for z in range(0, schem.length):
                 key = kf.get_key_xyz(schem, x, y, z)
 
-                if key in markovProbabilities.keys():
-                    randomSample = random.uniform(0, 1)
-                    currValue = 0.0
-                    for key2 in markovProbabilities[key]:
-                        if randomSample >= currValue and randomSample < currValue + markovProbabilities[key][key2]:
-                            schem.set_block(x, y, z, Block(key2))
-                            break
-                        currValue += markovProbabilities[key][key2]
-                else:
-                    if y <= maxY/2:
-                        schem.set_block(x, y, z, Block("minecraft:stone"))
+                if y <= schem.height/4:
+                    if key in markovProbabilitiesBelow.keys():
+                        randomSample = random.uniform(0, 1)
+                        currValue = 0.0
+                        for key2 in markovProbabilitiesBelow[key]:
+                            if randomSample >= currValue and randomSample < currValue + markovProbabilitiesBelow[key][key2]:
+                                schem.set_block(x, y, z, Block(key2))
+                                break
+                            currValue += markovProbabilitiesBelow[key][key2]
                     else:
-                        schem.set_block(x, y, z, Block("minecraft:air"))
+                        schem.set_block(x, y, z, Block("minecraft:stone"))
+                else:
+                    if key in markovProbabilitiesAbove.keys():
+                        randomSample = random.uniform(0, 1)
+                        currValue = 0.0
+                        for key2 in markovProbabilitiesAbove[key]:
+                            if randomSample >= currValue and randomSample < currValue + markovProbabilitiesAbove[key][key2]:
+                                schem.set_block(x, y, z, Block(key2))
+                                break
+                            currValue += markovProbabilitiesAbove[key][key2]
+                    else:
+                        if random.uniform(0, 1) < 0.5:
+                            schem.set_block(x, y, z, Block("minecraft:air"))
+                        else:
+                            schem.set_block(x, y, z, Block("minecraft:dirt"))
 
     schem.save_to_file(Path("markov/output_schems/" + output_name + "_generated.schem"), 2)
 
