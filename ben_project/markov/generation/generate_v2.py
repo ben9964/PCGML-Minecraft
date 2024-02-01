@@ -8,11 +8,11 @@ from markov.training import key_functions as kf
 
 def generate(pickle_id: str, output_name: str):
     markovProbabilities = pickle.load(open("markov/probabilities/" + pickle_id + "_probabilities.pickle", "rb"))
-    schem = Schematic(100, 50, 100)
+    schem = Schematic(25, 25, 25)
 
     maxY = schem.height - 1
-    for y in range(maxY, -1, -1):
-        for x in range(0, schem.width):
+    for x in range(0, schem.width):
+        for y in range(maxY, -1, -1):
             for z in range(0, schem.length):
                 key = kf.get_key_xyz(schem, x, y, z)
 
@@ -25,10 +25,10 @@ def generate(pickle_id: str, output_name: str):
                             break
                         currValue += markovProbabilities[key][key2]
                 else:
-                    if y == maxY or schem.get_block(x, y + 1, z).id == "minecraft:air":
-                        schem.set_block(x, y, z, Block("minecraft:air"))
-                    else:
+                    if y <= maxY/2:
                         schem.set_block(x, y, z, Block("minecraft:stone"))
+                    else:
+                        schem.set_block(x, y, z, Block("minecraft:air"))
 
     schem.save_to_file(Path("markov/output_schems/" + output_name + "_generated.schem"), 2)
 

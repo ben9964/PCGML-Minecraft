@@ -4,25 +4,24 @@ from pathlib import Path
 
 from schempy import Schematic
 from markov.training import key_functions as kf
+import time
 
 def train(directory_name: str, output_name: str):
     markovCounts = {}  # Dictionary of the 7 blocks around the corner as keys
     for filename in Path(directory_name).glob('*.schem'):
-        path = Path('input_schems/' + filename.name)
+        path = Path(directory_name + "/" + filename.name)
         print("Training: " + filename.name)
+        timeBeforeProcess = time.time()
         schem = Schematic.from_file(path)
+        print("Loaded in: " + str(time.time() - timeBeforeProcess))
+        timeBeforeProcess = time.time()
         markovCounts = kf.get_counts_xyz(schem, markovCounts)
+        print("Finished in: " + str(time.time() - timeBeforeProcess))
 
     print("normalizing...")
-    print(markovCounts)
+    timeBeforeNormalize = time.time()
     markovProbabilities = kf.normalize(markovCounts)
-
-    # go through probabilities and weight air less than everything else
-    for key in markovProbabilities.keys():
-        for key2 in markovProbabilities[key].keys():
-            if key2 == "minecraft:air":
-                markovProbabilities[key][key2] = markovProbabilities[key][key2] * 0.01
+    print("Normalized in: " + str(time.time() - timeBeforeNormalize))
 
     print("dumping...")
-    print(markovProbabilities)
     pickle.dump(markovProbabilities, open("markov/probabilities/" + output_name + "_probabilities.pickle", "wb"))
