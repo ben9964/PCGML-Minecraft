@@ -10,7 +10,7 @@ def generate(pickle_id: str, output_name: str):
     markovProbabilitiesAbove = pickle.load(open("markov/probabilities/" + pickle_id + "above_probabilities.pickle", "rb"))
     markovProbabilitiesBelow = pickle.load(
         open("markov/probabilities/" + pickle_id + "below_probabilities.pickle", "rb"))
-    schem = Schematic(100, 50, 100)
+    schem = Schematic(25, 25, 25)
 
     for x in range(0, schem.width):
         for y in range(schem.height - 1, -1, -1):

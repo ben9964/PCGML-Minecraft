@@ -2,22 +2,53 @@
 from schempy import Schematic
 
 
-def get_key_xyz(schem: Schematic, x: int, y: int, z: int):
-    westdown = " "
-    southwestdown = " "
-    southdown = " "
-    down = " "
+def get_key_xyz(schem: Schematic, x: int, y: int, z: int, direction: str = "x-z-"):
+    xydir = " "
+    xyzdir = " "
+    yzdir = " "
+    ydir = " "
+    match direction:
+        case "x-z-":
+            if y < schem.height - 1:
+                ydir = schem.get_block(x, y + 1, z).id
+            if x > 0 and y < schem.height - 1:
+                xydir = schem.get_block(x - 1, y + 1, z).id
+            if z > 0 and y < schem.height - 1:
+                yzdir = schem.get_block(x, y + 1, z - 1).id
+            if x > 0 and z > 0 and y < schem.height - 1:
+                xyzdir = schem.get_block(x - 1, y + 1, z - 1).id
 
-    if y < schem.height - 1:
-        down = schem.get_block(x, y + 1, z).id
-    if x > 0 and y < schem.height - 1:
-        westdown = schem.get_block(x - 1, y + 1, z).id
-    if z > 0 and y < schem.height - 1:
-        southdown = schem.get_block(x, y + 1, z - 1).id
-    if x > 0 and z > 0 and y < schem.height - 1:
-        southwestdown = schem.get_block(x - 1, y + 1, z - 1).id
+        case "x-z+":
+            if y < schem.height - 1:
+                ydir = schem.get_block(x, y + 1, z).id
+            if x > 0 and y < schem.height - 1:
+                xydir = schem.get_block(x - 1, y + 1, z).id
+            if z < schem.length - 1 and y < schem.height - 1:
+                yzdir = schem.get_block(x, y + 1, z + 1).id
+            if x > 0 and z < schem.length - 1 and y < schem.height - 1:
+                xyzdir = schem.get_block(x - 1, y + 1, z + 1).id
 
-    key = get_key_xz(schem, x, y, z) + westdown + southwestdown + southdown + down
+        case "x+z-":
+            if y < schem.height - 1:
+                ydir = schem.get_block(x, y + 1, z).id
+            if x < schem.width - 1 and y < schem.height - 1:
+                xydir = schem.get_block(x + 1, y + 1, z).id
+            if z > 0 and y < schem.height - 1:
+                yzdir = schem.get_block(x, y + 1, z - 1).id
+            if x < schem.width - 1 and z > 0 and y < schem.height - 1:
+                xyzdir = schem.get_block(x + 1, y + 1, z - 1).id
+
+        case "x+z+":
+            if y < schem.height - 1:
+                ydir = schem.get_block(x, y + 1, z).id
+            if x < schem.width - 1 and y < schem.height - 1:
+                xydir = schem.get_block(x + 1, y + 1, z).id
+            if z < schem.length - 1 and y < schem.height - 1:
+                yzdir = schem.get_block(x, y + 1, z + 1).id
+            if x < schem.width - 1 and z < schem.length - 1 and y < schem.height - 1:
+                xyzdir = schem.get_block(x + 1, y + 1, z + 1).id
+
+    key = get_key_xz(schem, x, y, z, direction) + xydir + xyzdir + yzdir + ydir
     return key
 
 def get_key_xyz_up(schem: Schematic, x: int, y: int, z: int):
@@ -39,19 +70,44 @@ def get_key_xyz_up(schem: Schematic, x: int, y: int, z: int):
     return key
 
 
-def get_key_xz(schem: Schematic, x: int, y: int, z: int):
-    west = " "
-    southwest = " "
-    south = " "
+def get_key_xz(schem: Schematic, x: int, y: int, z: int, direction: str = "x-z-"):
+    xdir = " "
+    xzdir = " "
+    zdir = " "
+    match direction:
+        case "x-z-":
+            if x > 0:
+                xdir = schem.get_block(x - 1, y, z).id
+            if z > 0:
+                zdir = schem.get_block(x, y, z - 1).id
+            if x > 0 and z > 0:
+                xzdir = schem.get_block(x - 1, y, z - 1).id
 
-    if x > 0:
-        west = schem.get_block(x - 1, y, z).id
-    if z > 0:
-        south = schem.get_block(x, y, z - 1).id
-    if x > 0 and z > 0:
-        southwest = schem.get_block(x - 1, y, z - 1).id
+        case "x-z+":
+            if x > 0:
+                xdir = schem.get_block(x - 1, y, z).id
+            if z < schem.length - 1:
+                zdir = schem.get_block(x, y, z + 1).id
+            if x > 0 and z < schem.length - 1:
+                xzdir = schem.get_block(x - 1, y, z + 1).id
 
-    key = west + southwest + south
+        case "x+z-":
+            if x < schem.width - 1:
+                xdir = schem.get_block(x + 1, y, z).id
+            if z > 0:
+                zdir = schem.get_block(x, y, z - 1).id
+            if x < schem.width - 1 and z > 0:
+                xzdir = schem.get_block(x + 1, y, z - 1).id
+
+        case "x+z+":
+            if x < schem.width - 1:
+                xdir = schem.get_block(x + 1, y, z).id
+            if z < schem.length - 1:
+                zdir = schem.get_block(x, y, z + 1).id
+            if x < schem.width - 1 and z < schem.length - 1:
+                xzdir = schem.get_block(x + 1, y, z + 1).id
+
+    key = xdir + xzdir + zdir
     return key
 
 def get_counts_xyz_up(schem: Schematic, markovCounts=None):
@@ -124,12 +180,15 @@ def get_counts_xz(schem: Schematic, markovCounts=None):
 
 def normalize(markovCounts: dict):
     markovProbabilities = {}
-    for key in markovCounts.keys():
-        markovProbabilities[key] = {}
+    for direction in markovCounts.keys():
+        for key in markovCounts[direction].keys():
+            if not direction in markovProbabilities.keys():
+                markovProbabilities[direction] = {}
+            markovProbabilities[direction][key] = {}
 
-        sumVal = 0
-        for key2 in markovCounts[key].keys():
-            sumVal += markovCounts[key][key2]
-        for key2 in markovCounts[key].keys():
-            markovProbabilities[key][key2] = markovCounts[key][key2] / sumVal
+            sumVal = 0
+            for key2 in markovCounts[direction][key].keys():
+                sumVal += markovCounts[direction][key][key2]
+            for key2 in markovCounts[direction][key].keys():
+                markovProbabilities[direction][key][key2] = markovCounts[direction][key][key2] / sumVal
     return markovProbabilities
