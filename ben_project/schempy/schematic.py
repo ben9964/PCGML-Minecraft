@@ -44,6 +44,10 @@ class Schematic:
         if not (0 <= x < self.width and 0 <= y < self.height and 0 <= z < self.length):
             raise ValueError("Coordinates out of range.")
 
+    def get_palette(self) -> Dict[Block, int]:
+        """Get the block palette."""
+        return self._block_palette.get_palette()
+
     def get_block(self, x: int, y: int, z: int) -> Block:
         """Get the block at the specified coordinates."""
         self._check_coordinates(x, y, z)

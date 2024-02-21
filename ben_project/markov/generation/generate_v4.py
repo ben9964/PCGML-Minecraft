@@ -11,16 +11,19 @@ def generate(pickle_id: str, output_name: str):
     markovProbabilitiesAbove = pickle.load(open("markov/probabilities/" + pickle_id + "above_probabilities.pickle", "rb"))
     markovProbabilitiesBelow = pickle.load(
         open("markov/probabilities/" + pickle_id + "below_probabilities.pickle", "rb"))
-    schem = Schematic(100, 50, 100)
-    #schem = Schematic.from_file(Path("markov/output_schems/multi_key_generated.schem"))
+    #schem = Schematic(100, 50, 100)
+    schem = Schematic.from_file(Path("input_schems/test/testseed2.schem"))
     airWeightingTop = 1.0
     airWeightingBottom = 1.0
 
-    for i in range(0, 10):
+    for i in range(0, 3):
         print("Pass: " + str(i))
         for x in range(0, schem.width):
             for y in range(schem.height - 1, -1, -1):
                 for z in range(0, schem.length):
+                    if schem.get_block(x, y, z).id != "minecraft:air" or x < 2:
+                        #print("Skipping: X: " + str(x) + " Y: " + str(y) + " Z: " + str(z) + " Block: " + schem.get_block(x, y, z).id)
+                        continue
                     if y <= schem.height/4:
                         probabilities = {}
                         for direction in directions:
