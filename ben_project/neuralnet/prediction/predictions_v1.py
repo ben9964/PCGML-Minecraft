@@ -12,7 +12,7 @@ def predict(model, token_to_index, index_to_token):
     seed_schem = Schematic.from_file(Path("seed_schems/seed.schem"))
     seed_sequence = torch.tensor(generate_sequence(seed_schem, token_to_index, index_to_token), dtype=torch.long)
     print("before")
-    print(seed_sequence[-15:])
+    print(seed_sequence)
 
     hidden_state = (torch.zeros(model.num_layers, model.hidden_size),
                     torch.zeros(model.num_layers, model.hidden_size))
@@ -25,4 +25,4 @@ def predict(model, token_to_index, index_to_token):
         seed_sequence = torch.cat((seed_sequence, torch.tensor([predicted_index])), dim=-1)
 
     print("after")
-    print(seed_sequence[-15:])
+    print(seed_sequence)
