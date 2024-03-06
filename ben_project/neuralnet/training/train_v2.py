@@ -15,18 +15,18 @@ def train(schem: Schematic, token_to_index, index_to_token, output_name: str):
     torch.set_default_device('cuda')
     features, labels = generate_slice_sequences(schem, token_to_index, index_to_token)
 
-    print(len(features))
-    for i in range(0, len(features)):
-        print(features[i], labels[i])
+    print(token_to_index)
 
     features = torch.tensor(features).float()
     labels = torch.tensor(labels)
     labels = torch.nn.functional.one_hot(labels, num_classes=num_tokens)
     labels = labels.float()
+    print(labels.shape)
+    print(features.shape)
 
     print("Generated Training Sequence")
 
-    model = SchematicLinear.of(num_tokens)
+    model = SchematicLSTM.of(num_tokens)
 
     dataset = data.TensorDataset(features, labels)
     dataloader = data.DataLoader(dataset, batch_size=16, shuffle=True, generator=torch.Generator(device='cuda'))
@@ -38,11 +38,18 @@ def train(schem: Schematic, token_to_index, index_to_token, output_name: str):
 
     epochs = 100
     loss = None
+    state = None
     for epoch in range(epochs):
         print(f'Epoch {epoch + 1}')
-        for X, y in dataloader:
-            y_hat = model(X)
-            loss = loss_fn(y_hat, y)
+        for X, Y in dataloader:
+            if state is None:
+                state = model.begin_state(batch_size=X.shape[0])
+            # print(X.size(), Y.size(), state.size()) # 32x35, 32x35, 32x256
+            y = Y.T.reshape(-1)
+            # print(y.size()) # 35x32 -> 1120
+            y_hat, state = model(X, state)
+            # print(y_hat.size()) # 1120x28
+            loss = loss_fn(y_hat, y.long())
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()

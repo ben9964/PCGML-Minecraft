@@ -12,22 +12,32 @@ def get_training_schem():
 
 def of(num_tokens):
     inputs = 4
-    return SchematicLSTM(num_inputs=inputs, num_outputs=num_tokens)
+    hidden_size = 32
+    return SchematicLSTM(input_size=inputs, output_size=num_tokens, hidden_size=hidden_size)
 
 class SchematicLSTM(nn.Module):
-    def __init__(self, num_inputs, num_outputs, hidden_size):
+    def __init__(self, input_size, output_size, hidden_size):
         super().__init__()
+        self.output_size = output_size
+        self.input_size = input_size
         self.hidden_size = hidden_size
-        self.num_inputs = num_inputs
 
-        self.lstm = nn.LSTM(num_inputs, hidden_size)
-        self.linear = nn.Linear(num_inputs, num_outputs)
-        torch.nn.init.normal_(self.linear.weight, std=0.01)
-        torch.nn.init.zeros_(self.linear.bias)
+        self.rnn = nn.RNN(output_size, hidden_size)
+        self.linear = nn.Linear(self.hidden_size, self.output_size)
 
+    def forward(self, inputs, state):
+        X = torch.nn.functional.one_hot(inputs.T.long(), self.output_size)
+        X = X.to(torch.float32)
+        Y, state = self.rnn(X, state)
+        # print(X.size()) # 35x32x28
+        # print(Y.size()) # 35x32x256
+        # print(state.size()) # 32x256
+        Y1 = Y.reshape((-1, Y.shape[-1]))
+        # print(Y1.size()) # 1120x256
+        out = self.linear(Y1)
+        # print(out.size()) # 1120x28
+        return out, state
 
-    def forward(self, features):
-        features, _ = self.lstm(features.view(features.shape[1], features.shape[0], -1))
-        out = self.linear(features)
-        predictions = torch.nn.functional.softmax(out, dim=-1)
-        return predictions
+    def begin_state(self, batch_size=1):
+        state = torch.zeros((self.rnn.num_layers, batch_size, self.hidden_size))
+        return state
