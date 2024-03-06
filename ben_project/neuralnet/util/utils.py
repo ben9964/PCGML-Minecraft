@@ -47,18 +47,50 @@ def generate_slice_sequences(schem, token_to_index, index_to_token):
                 labels.append(block)
     return features, labels
 
+# Predicts in the x direction
+def get_last_slice_features(schem, token_to_index):
+    sequences = []
+    for y in range(0, schem.height):
+        maxX = schem.width - 1
+        maxZ = schem.length - 1
+        prev = get_prev_3_horizontal(schem, maxX+1, y, 0)
+        #TODO: Make it recognise new generated slices below
+        below = -1
+        above = -1
+        sequences.append(
+            [
+                below,
+                above,
+                y,
+                token_to_index[prev[0]],
+                token_to_index[prev[1]],
+                token_to_index[prev[2]]
+            ]
+        )
+    return sequences
+
 def get_prev_3_horizontal(schem, x, y, z):
     prev = []
     tempx = x
     tempz = z
     for i in range(0, 3):
-        tempx -= 1
-        if tempx >= 0:
+        tempz -= 1
+        if tempz >= 0:
             prev.append(schem.get_block(tempx, y, tempz).id)
-        elif tempz-1 >= 0:
-            tempz -= 1
-            tempx = schem.length
+        elif tempx-1 >= 0:
+            tempx -= 1
+            tempz = schem.length-1
             prev.append(schem.get_block(tempx, y, tempz).id)
         else:
             prev.append(None)
     return prev
+
+def get_above(schem, x, y, z):
+    if y+1 >= schem.height:
+        return -1
+    return schem.get_block(x, y+1, z).id
+
+def get_below(schem, x, y, z):
+    if y-1 < 0:
+        return -1
+    return schem.get_block(x, y-1, z).id

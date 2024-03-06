@@ -39,6 +39,20 @@ class Schematic:
             (self.height, self.length, self.width), dtype=int)
         self._entities: List[Entity] = []
 
+    def reshape(self, width: int, height: int, length: int):
+        """Change the dimensions of the schematic."""
+        new_data = np.zeros((height, length, width), dtype=int)
+        new_data[:self.height, :self.length, :self.width] = self._block_data
+        self._block_data = new_data
+
+        new_biome_data = np.zeros((height, length, width), dtype=int)
+        new_biome_data[:self.height, :self.length, :self.width] = self._biome_data
+        self._biome_data = new_biome_data
+
+        self.width = utils.to_unsigned_short(width)
+        self.height = utils.to_unsigned_short(height)
+        self.length = utils.to_unsigned_short(length)
+
     def _check_coordinates(self, x: int, y: int, z: int) -> None:
         """Check that the coordinates are within the schematic bounds."""
         if not (0 <= x < self.width and 0 <= y < self.height and 0 <= z < self.length):
