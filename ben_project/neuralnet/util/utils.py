@@ -26,19 +26,12 @@ def generate_slice_sequences(schem, token_to_index, index_to_token):
                     below = -1
                 else:
                     below = token_to_index[schem.get_block(x, y-1, z).id]
-                above: int
-                if y+1 >= schem.height:
-                    above = -1
-                else:
-                    above = token_to_index[schem.get_block(x, y+1, z).id]
                 prev = get_prev_3_horizontal(schem, x, y, z)
                 if None in prev:
                     continue
                 features.append(
                     [
                         below,
-                        above,
-                        y,
                         token_to_index[prev[0]],
                         token_to_index[prev[1]],
                         token_to_index[prev[2]]
@@ -52,16 +45,12 @@ def get_last_slice_features(schem, token_to_index):
     sequences = []
     for y in range(0, schem.height):
         maxX = schem.width - 1
-        maxZ = schem.length - 1
         prev = get_prev_3_horizontal(schem, maxX+1, y, 0)
         #TODO: Make it recognise new generated slices below
         below = -1
-        above = -1
         sequences.append(
             [
                 below,
-                above,
-                y,
                 token_to_index[prev[0]],
                 token_to_index[prev[1]],
                 token_to_index[prev[2]]

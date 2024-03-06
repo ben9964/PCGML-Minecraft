@@ -36,7 +36,7 @@ def train(schem: Schematic, token_to_index, index_to_token, output_name: str):
     dataloader = data.DataLoader(dataset, batch_size=16, shuffle=True, generator=torch.Generator(device='cuda'))
 
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.0001)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.00001)
 
     print("Commencing training...")
 
@@ -54,5 +54,5 @@ def train(schem: Schematic, token_to_index, index_to_token, output_name: str):
 
 
     print("Saving Model")
-    #torch.save(model.state_dict(), f"neuralnet/models/state/{output_name}.pt")
+    torch.save(model.state_dict(), f"neuralnet/models/state/{output_name}.pt")
 
