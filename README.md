@@ -27,8 +27,9 @@ https://sketchfab.com/3d-models/test3dschematic-7b8a33280baa477d8a61041c3e2bb3c4
 3. View the schematic in 3D
 
 ## Dependencies
+These dependencies and libraries will need installing in your own environment unless documented as otherwise
 - numpy
-- schempy (included in this repository)
+- schempy (included in this repository) Ref: (https://github.com/mmmfrieddough/schempy/tree/main)
 ### For Neural Network Barebones Approach
 - Pytorch
 - torchvision
