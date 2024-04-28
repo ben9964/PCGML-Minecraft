@@ -59,3 +59,6 @@ There are a number of probabilities already packaged in this repository, though 
 6. The schematic will be saved in the `output_schems` folder with the name you gave as parameter to the `generate` function
 
 ## **Follow instructions in the `Considerations` section to view the output schematics**
+
+
+Packaged with the other supporting documents is a minecraft world that can be loaded into the game and played to see all examples ingame that have been included in my report
