@@ -1,18 +1,21 @@
 import pickle
 import random
 from pathlib import Path
+from typing import Tuple
 
 from schempy import Schematic, Block
 from markov.training import key_functions as kf
 
-
-def generate(pickle_id: str, output_name: str):
+def generate(pickle_id: str, output_name: str, size: Tuple[int, int, int] = None):
     directions = ["x-z-", "x-z+", "x+z-", "x+z+"]
     markovProbabilitiesAbove = pickle.load(open("markov/probabilities/" + pickle_id + "above_probabilities.pickle", "rb"))
     markovProbabilitiesBelow = pickle.load(
         open("markov/probabilities/" + pickle_id + "below_probabilities.pickle", "rb"))
-    #schem = Schematic(100, 50, 100)
+
     schem = Schematic.from_file(Path("input_schems/test/testseed2.schem"))
+    if size is not None:
+        schem = Schematic(size[0], size[1], size[2])
+
     airWeightingTop = 1.0
     airWeightingBottom = 1.0
 
